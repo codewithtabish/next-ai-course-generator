@@ -20,7 +20,10 @@ const BlogCard = ({ blog, firstBlog }: any) => {
       <CardContent className="p-0">
         <Link href={`/blog/${blog.id}`}>
           <Image
-            src={blog?.coverImageUrl}
+            src={
+              blog?.coverImageUrl ||
+              "https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
+            }
             width={200}
             height={firstBlog ? 300 : 180}
             alt={blog?.title}
