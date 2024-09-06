@@ -17,9 +17,9 @@ const Hero = () => {
           </h1>
 
           <p className="mt-4 sm:text-xl/relaxed  ">
-            Effortlessly create and manage AI-driven courses with our
-            intelligent platform. Tailor educational content to meet diverse
-            learning needs and enhance user engagement
+            Create and manage AI-driven courses effortlessly. Tailor content to
+            diverse learning needs and boost engagement with our intelligent
+            platform
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
