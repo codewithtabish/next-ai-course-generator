@@ -17,8 +17,9 @@ const Hero = () => {
           </h1>
 
           <p className="mt-4 sm:text-xl/relaxed  ">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nesciunt
-            illo tenetur fuga ducimus numquam ea!
+            Effortlessly create and manage AI-driven courses with our
+            intelligent platform. Tailor educational content to meet diverse
+            learning needs and enhance user engagement
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
