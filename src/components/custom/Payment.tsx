@@ -141,10 +141,12 @@ const Payment = ({ handleSubscribe, loader }: any) => {
             </ul>
 
             <Button
+              onClick={handleSubscribe}
               className="w-full dark:text-white mt-3"
+
               // className="mt-8 w-full py-3 block rounded-full border border-primary bg-primary px-12  text-center text-sm font-medium text-white hover:bg-primary hover:ring-1 hover:ring-primary focus:outline-none focus:ring active:text-primary"
             >
-              Get Started
+              {loader ? "Subscribing" : "Get Started"}
             </Button>
           </div>
 
