@@ -68,7 +68,7 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
           }
         >
           <Image
-            src={course?.courseBanner || "/courseone.jpeg"}
+            src={course?.courseBanner}
             width={200}
             height={160}
             alt={course?.courseName}

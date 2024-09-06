@@ -20,7 +20,7 @@ const BlogCard = ({ blog, firstBlog }: any) => {
       <CardContent className="p-0">
         <Link href={`/blog/${blog.id}`}>
           <Image
-            src={blog?.coverImageUrl || "/courseone.jpeg"}
+            src={blog?.coverImageUrl}
             width={200}
             height={firstBlog ? 300 : 180}
             alt={blog?.title}
