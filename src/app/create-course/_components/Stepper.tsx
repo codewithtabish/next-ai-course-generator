@@ -52,6 +52,7 @@ const Stepper = () => {
 
     // Insert data into the courseList table
     try {
+      console.log("NOW I AM HERE 💞 at upload to DB...");
       // @ts-ignore
       const response = await db.insert(courseList).values({
         courseId: courseId, // Unique identifier for the course

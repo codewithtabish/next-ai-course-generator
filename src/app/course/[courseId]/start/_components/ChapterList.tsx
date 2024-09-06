@@ -1,7 +1,15 @@
 import ThemeChanger from "@/components/custom/ThemeChanger";
 import React from "react";
 
-const ChapterList = ({ course, getSeletechapter }: any) => {
+interface ChapterListProps {
+  course: any;
+  onSelectChapter: (chapter: any, item: any) => void; // Updated prop name
+}
+
+const ChapterList: React.FC<ChapterListProps> = ({
+  course,
+  onSelectChapter,
+}) => {
   const parsedCourseOutput = JSON.parse(course?.courseOutput);
 
   return (
@@ -24,7 +32,7 @@ const ChapterList = ({ course, getSeletechapter }: any) => {
         {parsedCourseOutput?.chapters.map((item: any, index: any) => {
           return (
             <div
-              onClick={() => getSeletechapter(index, item)}
+              onClick={() => onSelectChapter(index, item)} // Updated function call
               key={index}
               className="border-b-2 border-gray-500 cursor-pointer"
             >

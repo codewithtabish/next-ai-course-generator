@@ -7,8 +7,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import categoryList from "@/static/categoryList";
 import * as Icons from "react-icons/fa";
+
+import categories from "@/static/categoryList"; // Adjust the path as needed
 
 const SelectCategory = () => {
   const { userData, setUserData } = useUserInputContext();
@@ -20,7 +21,7 @@ const SelectCategory = () => {
   return (
     <Carousel>
       <CarouselContent className="">
-        {categoryList.map((item, index: number) => {
+        {categories.map((item, index: number) => {
           // @ts-ignore
           const IconComponent = Icons[item.icon]; // Get the icon component dynamically
 

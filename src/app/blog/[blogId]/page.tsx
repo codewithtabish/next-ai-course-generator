@@ -9,7 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { Eye, ThumbsUp, ThumbsDown, Trash } from "lucide-react"; // Use thumbs up and down icons
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FaVolumeUp } from "react-icons/fa";
 import { SlLike } from "react-icons/sl";
 import DeleteDialouge from "./_components/DeleteDialouge";
@@ -19,24 +19,13 @@ const SingleBlog = ({ params }: any) => {
   const [result, setResult] = useState<any>();
   const { isLoaded, isSignedIn, user: authUser } = useUser();
   const [hasLiked, setHasLiked] = useState(false);
-  const [comment, setComment] = useState<any>();
+  const [comment, setComment] = useState<any>("");
   const [loader, setLoader] = useState(false);
-  const [comments, setComments] = useState<any>();
+  const [comments, setComments] = useState<any>([]);
   const [commentLoader, setCommentLoader] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn && authUser) {
-      getSingleBlog();
-    }
-  }, [isLoaded, isSignedIn, authUser]);
-
-  useEffect(() => {
-    getAllReviews();
-    return () => {};
-  }, [commentLoader]);
-
-  const getSingleBlog = async () => {
+  const getSingleBlog = useCallback(async () => {
     setLoader(true);
     const blogData = await db
       .select()
@@ -52,8 +41,10 @@ const SingleBlog = ({ params }: any) => {
         setHasLiked(blog.likeUserIds?.includes(userEmail));
         if (!blog.viewUserIds?.includes(userEmail)) {
           // @ts-ignore
+
           blog.views += 1;
           // @ts-ignore
+
           blog.viewUserIds = [...blog.viewUserIds, userEmail];
 
           const updateResult = await db
@@ -73,7 +64,38 @@ const SingleBlog = ({ params }: any) => {
         }
       }
     }
-  };
+  }, [authUser, blogId]);
+
+  const getAllReviews = useCallback(async () => {
+    try {
+      setLoader(true);
+      const response = await db
+        .select()
+        .from(BlogComment)
+        .where(eq(BlogComment.postId, blogId));
+      setComments(response);
+      console.log("The all reviews are ", response);
+    } catch (error) {
+      console.log("The all reviews error are ", error);
+    } finally {
+      setLoader(false);
+    }
+  }, [blogId]);
+
+  // Fetch the single blog post and reviews when `isLoaded` changes
+  useEffect(() => {
+    if (isLoaded) {
+      getSingleBlog();
+      getAllReviews();
+    }
+  }, [isLoaded, getSingleBlog, getAllReviews]);
+
+  // Fetch comments whenever `commentLoader` changes
+  useEffect(() => {
+    if (commentLoader) {
+      getAllReviews();
+    }
+  }, [commentLoader, getAllReviews]);
 
   const handleLikeAndRemoveLike = async () => {
     if (!result) return;
@@ -137,36 +159,14 @@ const SingleBlog = ({ params }: any) => {
         console.log("The post response is ", response[0]);
       }
       setCommentLoader(false);
-
       setComment("");
     } catch (error) {
       console.error("The post comment error is ", error);
       setCommentLoader(false);
-    } finally {
-      setCommentLoader(false);
-
-      setComment("");
     }
   };
 
-  const getAllReviews = async () => {
-    try {
-      setLoader(true);
-      const response = await db
-        .select()
-        .from(BlogComment)
-        .where(eq(BlogComment.postId, blogId));
-      setComments(response);
-      console.log("The all reviews are ", response);
-    } catch (error) {
-      setLoader(false);
-      console.log("The all reviews error  are ", error);
-    } finally {
-      setLoader(false);
-    }
-  };
-
-  const delteReview = async (id: any) => {
+  const deleteReview = async (id: any) => {
     try {
       setDeleteLoader(true);
       const deleteResponse = await db
@@ -174,14 +174,11 @@ const SingleBlog = ({ params }: any) => {
         .where(eq(BlogComment.id, id));
       if (deleteResponse) {
         setDeleteLoader(false);
-
         getAllReviews();
       }
     } catch (error) {
       setDeleteLoader(false);
       console.log("Deleting review error is ", error);
-    } finally {
-      setDeleteLoader(false);
     }
   };
 
@@ -305,7 +302,7 @@ const SingleBlog = ({ params }: any) => {
                         authUser?.primaryEmailAddress?.emailAddress && (
                         <div className="py-1 flex justify-end ">
                           <DeleteDialouge
-                            delteReview={() => delteReview(item?.id)}
+                            delteReview={() => deleteReview(item?.id)}
                             // deleteLoader={deleteLoader}
                           >
                             <Trash className="text-red-400 cursor-pointer" />

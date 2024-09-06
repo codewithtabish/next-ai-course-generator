@@ -8,7 +8,7 @@ import { courseList } from "@/config/schema";
 import { useUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 const SubscribePage = ({ params }: any) => {
   const [course, setCourse] = useState<any>(null);
@@ -17,13 +17,8 @@ const SubscribePage = ({ params }: any) => {
   const { toast } = useToast();
   const router = useRouter();
 
-  useEffect(() => {
-    if (params?.courseId) {
-      getSingleCourse();
-    }
-  }, [params?.courseId]);
-
-  const getSingleCourse = async () => {
+  // Memoize getSingleCourse to ensure stable function reference
+  const getSingleCourse = useCallback(async () => {
     try {
       const result = await db
         .select()
@@ -34,7 +29,13 @@ const SubscribePage = ({ params }: any) => {
     } catch (error) {
       console.log("The error while getting the single course is ", error);
     }
-  };
+  }, [params.courseId]);
+
+  useEffect(() => {
+    if (params?.courseId) {
+      getSingleCourse();
+    }
+  }, [params?.courseId, getSingleCourse]); // Include getSingleCourse in dependencies
 
   const handleSubscribe = async () => {
     setLoader(true);
@@ -46,20 +47,23 @@ const SubscribePage = ({ params }: any) => {
         .execute();
 
       if (existingCourse?.length > 0) {
-        const existingPurchases = existingCourse[0].purchases || [];
+        // Explicitly assert type if you know the structure
+        // @ts-ignore
+        const existingPurchases: string[] = existingCourse[0].purchases || [];
 
         if (
           !existingPurchases.includes(
-            authUser?.primaryEmailAddress?.emailAddress
+            authUser?.primaryEmailAddress?.emailAddress || ""
           )
         ) {
           const updatedPurchases = [
             ...existingPurchases,
-            authUser?.primaryEmailAddress?.emailAddress,
+            authUser?.primaryEmailAddress?.emailAddress || "",
           ];
 
           const response = await db
             .update(courseList)
+            // @ts-ignore
             .set({ purchases: updatedPurchases })
             .where(eq(courseList.courseId, params.courseId))
             .execute();
@@ -75,7 +79,7 @@ const SubscribePage = ({ params }: any) => {
           console.log("Subscription successful!");
         } else {
           toast({
-            title: "Course already Subscribed ",
+            title: "Course already Subscribed",
             description: course?.name + " already subscribed ..",
           });
           router.push("/");

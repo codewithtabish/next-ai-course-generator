@@ -3,7 +3,7 @@ import { db } from "@/config/db";
 import { courseList } from "@/config/schema";
 import { useUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import CourseCard from "./CourseCard";
 import { useUserCourseListContext } from "@/context/UserCourseListContext";
 import { BarLoader } from "react-spinners";
@@ -16,11 +16,11 @@ const UserCourseList = () => {
   const { userCourseList: globalUserCourseList, setuserCourseList } =
     useUserCourseListContext();
 
-  const getAllUserCourses = async () => {
+  const getAllUserCourses = useCallback(async () => {
     try {
       if (isSignedIn && authUser) {
         const result = await db.select().from(courseList).where(
-          //   @ts-ignore
+          // @ts-ignore
           eq(courseList?.createdBy, authUser?.primaryEmailAddress?.emailAddress)
         );
         setCourseList(result);
@@ -31,16 +31,16 @@ const UserCourseList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isSignedIn, authUser, setuserCourseList]);
 
   useEffect(() => {
     if (isLoaded) {
       getAllUserCourses();
     }
-  }, [isLoaded]);
+  }, [isLoaded, getAllUserCourses]);
 
   if (loading || !isLoaded) {
-    <CustomLaoder />;
+    return <CustomLaoder />;
   }
 
   if (!isSignedIn) {

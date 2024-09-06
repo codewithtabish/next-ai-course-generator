@@ -1,5 +1,5 @@
 "use client";
-
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,10 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import blogCategories from "@/static/blogCategoryList";
-import React, { useState } from "react";
 import { TagsInput } from "react-tag-input-component";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { Button } from "@/components/ui/button";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storageDB } from "@/config/firebase";
@@ -22,6 +19,11 @@ import { BlogPost } from "@/config/schema";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
+// Import ReactQuill dynamically with SSR disabled
+const ReactQuill =
+  typeof window !== "undefined" ? require("react-quill") : () => null;
+import "react-quill/dist/quill.snow.css";
+
 const BlogCreatePage = () => {
   const [selected, setSelected] = useState<string[]>([]);
   const [blogContent, setBlogContent] = useState<string>("");
@@ -29,8 +31,13 @@ const BlogCreatePage = () => {
   const [file, setFile] = useState<File | undefined>();
   const [category, setCategory] = useState<string>("");
   const [loader, setLoader] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const { isLoaded, isSignedIn, user: authUser } = useUser();
   const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true); // Set to true when component is mounted on the client
+  }, []);
 
   const handleUpload = async () => {
     if (!file) return;
@@ -45,7 +52,6 @@ const BlogCreatePage = () => {
 
       // Get the file URL from Firebase Storage
       const fileURL = await getDownloadURL(uploadResult.ref);
-
       console.log("File uploaded successfully. Download URL:", fileURL);
 
       if (fileURL) {
@@ -68,8 +74,6 @@ const BlogCreatePage = () => {
           setLoader(false);
         }
       }
-
-      // You can now use the `fileURL` as needed (e.g., save to your database)
     } catch (error) {
       console.error("Error uploading file:", error);
       setLoader(false);
@@ -118,13 +122,15 @@ const BlogCreatePage = () => {
           />
         </div>
         <div className="my-4 grid-cols-12">
-          <ReactQuill
-            style={{ height: 200 }}
-            theme="snow"
-            value={blogContent}
-            onChange={setBlogContent}
-            className="min-h-[40vh]"
-          />
+          {isClient && (
+            <ReactQuill
+              style={{ height: 200 }}
+              theme="snow"
+              value={blogContent}
+              onChange={setBlogContent}
+              className="min-h-[40vh]"
+            />
+          )}
         </div>
         <div className="grid md:grid-cols-12 mt-8">
           <Input

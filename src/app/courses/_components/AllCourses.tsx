@@ -1,8 +1,9 @@
 "use client";
+
 import { courseList } from "@/config/schema";
 import { useUser } from "@clerk/nextjs";
 import { and, eq, lte } from "drizzle-orm";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useUserCourseListContext } from "@/context/UserCourseListContext";
 import { db } from "@/config/db";
 import CourseCard from "@/app/dashboard/_components/CourseCard";
@@ -15,7 +16,8 @@ const AllCourses = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { searchData, setsearchData, loader, setLoader } = useSearchContext();
 
-  const getAllUserCourses = async () => {
+  // Memoize getAllUserCourses to ensure it doesn't change on every render
+  const getAllUserCourses = useCallback(async () => {
     setLoader(true);
     try {
       let query: any = db.select().from(courseList);
@@ -47,13 +49,13 @@ const AllCourses = () => {
       setLoading(false);
       setLoader(false);
     }
-  };
+  }, [searchData, setLoader]); // Include searchData and setLoader in dependencies
 
   useEffect(() => {
     if (isLoaded) {
       getAllUserCourses();
     }
-  }, [isLoaded, searchData]);
+  }, [isLoaded, getAllUserCourses]); // Use memoized function here
 
   if (loading || !isLoaded || loader) {
     return <CustomLaoder />;
@@ -64,7 +66,7 @@ const AllCourses = () => {
       <h1 className="text-2xl font-bold py-6">Courses</h1>
       <div className="grid md:grid-cols-3 gap-5">
         {userCourseList.length > 0 ? (
-          userCourseList?.map((item, index) => (
+          userCourseList.map((item, index) => (
             <div key={index}>
               <CourseCard
                 fromHome={true}

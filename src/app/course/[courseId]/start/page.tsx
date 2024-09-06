@@ -1,26 +1,20 @@
 "use client";
-import SideBar from "@/app/dashboard/_components/SideBar";
+
+import React, { useEffect, useState, useCallback } from "react";
 import { db } from "@/config/db";
 import { courseList } from "@/config/schema";
 import { eq } from "drizzle-orm";
-import React, { useEffect, useState } from "react";
 import ChapterList from "./_components/ChapterList";
 import CourseContent from "./_components/CourseContent";
 import { BarLoader } from "react-spinners";
-import AppHeader from "@/components/custom/Header";
 
-const page = ({ params }: any) => {
+const Page = ({ params }: any) => {
   const [course, setCourse] = useState<any>();
-  const [selectedChapter, setselectedChapter] = useState<any>();
-  const [selectedItem, setselectedItem] = useState<any>();
+  const [selectedChapter, setSelectedChapter] = useState<any>();
+  const [selectedItem, setSelectedItem] = useState<any>();
 
-  useEffect(() => {
-    getSingleCourse();
-
-    return () => {};
-  }, [params]);
-
-  const getSingleCourse = async () => {
+  // Memoize getSingleCourse to ensure it doesn't change on every render
+  const getSingleCourse = useCallback(async () => {
     try {
       const result = await db
         .select()
@@ -31,7 +25,11 @@ const page = ({ params }: any) => {
     } catch (error) {
       console.log("The error while getting the single course is ", error);
     }
-  };
+  }, [params.courseId]); // Include params.courseId in dependencies
+
+  useEffect(() => {
+    getSingleCourse();
+  }, [getSingleCourse]); // Use the memoized function here
 
   if (!course) {
     return (
@@ -40,16 +38,21 @@ const page = ({ params }: any) => {
       </div>
     );
   }
-  const getSeletechapter = (chapter: any, item: any) => {
-    setselectedChapter(chapter);
-    setselectedItem(item);
+
+  const handleSelectChapter = (chapter: any, item: any) => {
+    setSelectedChapter(chapter);
+    setSelectedItem(item);
   };
+
   return (
     <>
       <div className="grid md:grid-cols-12 gap-5">
         <div className="grid col-span-4 p-10">
           {course && (
-            <ChapterList course={course} getSeletechapter={getSeletechapter} />
+            <ChapterList
+              course={course}
+              onSelectChapter={handleSelectChapter}
+            />
           )}
         </div>
         <div className="grid col-span-8 p-5">
@@ -64,4 +67,4 @@ const page = ({ params }: any) => {
   );
 };
 
-export default page;
+export default Page;

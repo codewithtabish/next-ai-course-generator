@@ -7,18 +7,14 @@ import AppHeader from "@/components/custom/Header";
 import { db } from "@/config/db";
 import { courseList } from "@/config/schema";
 import { eq } from "drizzle-orm";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+// @ts-ignore
 
-const page = ({ params }: any) => {
+const Page = ({ params }: any) => {
   const [course, setCourse] = useState<any>();
+  const [loading, setLoading] = useState(true); // Added loading state
 
-  useEffect(() => {
-    getSingleCourse();
-
-    return () => {};
-  }, [params]);
-
-  const getSingleCourse = async () => {
+  const getSingleCourse = useCallback(async () => {
     try {
       const result = await db
         .select()
@@ -28,12 +24,23 @@ const page = ({ params }: any) => {
       setCourse(result[0]);
     } catch (error) {
       console.log("The error while getting the single course is ", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching
     }
-  };
+  }, [params.courseId]); // Dependency added
+
+  useEffect(() => {
+    getSingleCourse();
+  }, [getSingleCourse]); // Dependency updated
+
+  if (loading) {
+    return <CustomLaoder />; // Display loader while fetching
+  }
+
   return (
     <div>
       <div className="py-16 md:px-12 max-w-6xl mx-auto">
-        <h1 className="font-bold text-3xl text-center ">View Course </h1>
+        <h1 className="font-bold text-3xl text-center">View Course</h1>
         {course && <CourseBasicInfo course={course} fromViewCourse={true} />}
 
         {course ? (
@@ -51,4 +58,4 @@ const page = ({ params }: any) => {
   );
 };
 
-export default page;
+export default Page;

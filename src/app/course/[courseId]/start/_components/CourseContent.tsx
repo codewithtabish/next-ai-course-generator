@@ -1,21 +1,15 @@
 import Chapters from "@/app/create-course/[courseId]/_components/Chapters";
 import { db } from "@/config/db";
-import { CourseChapters, courseList } from "@/config/schema";
+import { CourseChapters } from "@/config/schema";
 import { and, eq } from "drizzle-orm";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import YouTube from "react-youtube";
 
 const CourseContent = ({ course, selectedChapter, selectedItem }: any) => {
-  const [chapterContent, setchapterContent] = useState<any>();
-  const [error, seterror] = useState<any>();
+  const [chapterContent, setChapterContent] = useState<any>();
+  const [error, setError] = useState<any>();
 
-  useEffect(() => {
-    getSingleChapterContent();
-
-    return () => {};
-  }, [course, selectedChapter, selectedItem]);
-
-  const getSingleChapterContent = async () => {
+  const getSingleChapterContent = useCallback(async () => {
     try {
       const response = await db
         .select()
@@ -27,12 +21,17 @@ const CourseContent = ({ course, selectedChapter, selectedItem }: any) => {
           )
         );
       console.log("The start data here is ", response);
-      setchapterContent(response[0]);
+      setChapterContent(response[0]);
     } catch (error) {
       console.log("The error is", error);
-      seterror(error);
+      setError(error);
     }
-  };
+  }, [course?.courseId, selectedChapter]); // Added dependencies
+
+  useEffect(() => {
+    getSingleChapterContent();
+  }, [getSingleChapterContent, course, selectedChapter, selectedItem]); // Added dependencies
+
   const opts = {
     height: "390",
     width: "640",
@@ -44,7 +43,6 @@ const CourseContent = ({ course, selectedChapter, selectedItem }: any) => {
 
   return (
     <div className="pr-5 py-2 overflow-x-hidden">
-      {/* {JSON.stringify(chapterContent?.content[0])} */}
       <div>
         <h1 className="text-2xl font-bold">{selectedItem?.chapterName}</h1>
         <p className="dark:text-gray-300 py-3">{selectedItem?.about}</p>
@@ -53,24 +51,22 @@ const CourseContent = ({ course, selectedChapter, selectedItem }: any) => {
         <YouTube videoId={chapterContent?.videoId} opts={opts} />
       </div>
       <div className="flex flex-col gap-3">
-        {chapterContent?.content?.map((item: any, index: any) => {
-          return (
-            <div
-              key={index}
-              className="space-y-3 border border-gray-300 rounded-md my-3 p-10"
-            >
-              <h3 className="text-xl font-bold">{item?.title}</h3>
-              <p className="whitespace-pre-wrap">{item?.description}</p>
-              {item?.code && (
-                <div className="bg-black text-white p-5 dark:bg-gray-700 rounded-md">
-                  <pre>
-                    <code>{item?.code}</code>
-                  </pre>
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {chapterContent?.content?.map((item: any, index: any) => (
+          <div
+            key={index}
+            className="space-y-3 border border-gray-300 rounded-md my-3 p-10"
+          >
+            <h3 className="text-xl font-bold">{item?.title}</h3>
+            <p className="whitespace-pre-wrap">{item?.description}</p>
+            {item?.code && (
+              <div className="bg-black text-white p-5 dark:bg-gray-700 rounded-md">
+                <pre>
+                  <code>{item?.code}</code>
+                </pre>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

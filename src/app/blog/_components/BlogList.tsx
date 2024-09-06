@@ -6,7 +6,7 @@ import BlogCard from "./BlogCard";
 import { useUser } from "@clerk/nextjs";
 import CustomLaoder from "@/components/custom/CustomLaoder";
 
-const BlogList = async () => {
+const BlogList = () => {
   const [data, setData] = useState<any>();
   const { isLoaded, isSignedIn, user: authUser } = useUser();
 

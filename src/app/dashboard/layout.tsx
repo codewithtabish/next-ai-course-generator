@@ -12,12 +12,11 @@ const dashboardLayout = ({ children }: any) => {
         </div>
         <div
           className="
-         
         col-span-10
       py-5
       "
         >
-          <DashBoardHeader />
+          {/* <DashBoardHeader /> */}
           <div className="p-10">{children}</div>
         </div>
       </div>

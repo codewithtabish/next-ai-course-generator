@@ -72,23 +72,26 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
             width={200}
             height={160}
             alt={course?.courseName}
-            className="rounded-md object-fill w-full h-full min-h-[150px] max-h-[150px]"
+            className="rounded-md object-fill w-full  min-h-[150px] max-h-[150px]"
           />
         </Link>
       </CardContent>
       <CardHeader>
-        <CardTitle className="leading-7">
+        <CardTitle className="leading-7 min-h-[70px] max-h-[70px]">
           {parsedCourseOutput?.courseName}
         </CardTitle>
         <div className="flex justify-between items-center">
           <div></div>
-          <DropDownMenu
-            className="mr-5"
-            handleDeleteCourse={handleDeleteCourse}
-            deleteLoader={deleteLoader}
-          >
-            <MenuIcon className="w-6 h-6 text-right" />
-          </DropDownMenu>
+          {course?.createdBy ===
+            authUser?.primaryEmailAddress?.emailAddress && (
+            <DropDownMenu
+              className="mr-5"
+              handleDeleteCourse={handleDeleteCourse}
+              deleteLoader={deleteLoader}
+            >
+              <MenuIcon className="w-6 h-6 text-right" />
+            </DropDownMenu>
+          )}
         </div>
       </CardHeader>
       <CardFooter>
@@ -109,8 +112,8 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
             {hasPurchasedCourse ? (
               <Badge variant={"outline"}>purchased</Badge>
             ) : !isCourseCreator ? (
-              <div className="bg-gray-500 p-3 flex justify-center items-center rounded-full w-8 h-8 border border-red-0">
-                <h4 className="text-white">
+              <div className="bg-gray-500  p-3 flex justify-center items-center rounded-full w-8 h-8 border border-red-0">
+                <h4 className="text-white text-[11px]">
                   ${course?.price > 0 ? course?.price : "free"}
                 </h4>
               </div>

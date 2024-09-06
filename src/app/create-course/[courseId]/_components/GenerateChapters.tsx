@@ -31,7 +31,6 @@ const GenerateChapters = ({ course }: any) => {
               content: JSON.parse(result?.response?.text()),
               videoId: getVideo(),
             });
-            console.log("The data at last is ....", chaptersResponse);
             setgenerateChaptersLoading(false);
             await db.update(courseList).set({
               publish: true,
