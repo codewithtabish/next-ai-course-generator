@@ -21,9 +21,11 @@ const BlogCard = ({ blog, firstBlog }: any) => {
         <Link href={`/blog/${blog.id}`}>
           <Image
             src={
-              blog?.coverImageUrl
+              firstBlog
                 ? blog?.coverImageUrl
-                : "https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
+                : // ? blog?.coverImageUrl
+                  // :
+                  "https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
             }
             width={200}
             height={firstBlog ? 300 : 180}

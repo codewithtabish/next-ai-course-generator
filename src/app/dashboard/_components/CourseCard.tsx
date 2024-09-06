@@ -69,9 +69,10 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
         >
           <Image
             src={
-              course?.courseBanner
-                ? course?.courseBanner
-                : "https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
+              // course?.courseBanner
+              // ? course?.courseBanner
+              // :
+              "https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
             }
             width={200}
             height={160}
@@ -81,13 +82,15 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
         </Link>
       </CardContent>
       <CardHeader>
-        <CardTitle className="leading-7 min-h-[70px] max-h-[70px]">
+        <CardTitle className="leading-7  line-clamp-1">
           {parsedCourseOutput?.courseName}
         </CardTitle>
-        <div className="flex justify-between items-center">
+        <p className="line-clamp-2 text-sm dark:text-gray-300 text-gray-700">
+          {parsedCourseOutput?.description}
+        </p>
+        <div className="flex justify-between items-center min-h-[30px] mt-5 max-h-[30px]">
           <div></div>
-          {course?.createdBy ===
-            authUser?.primaryEmailAddress?.emailAddress && (
+          {course?.createdBy === authUser?.primaryEmailAddress?.emailAddress ? (
             <DropDownMenu
               className="mr-5"
               handleDeleteCourse={handleDeleteCourse}
@@ -95,6 +98,8 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
             >
               <MenuIcon className="w-6 h-6 text-right" />
             </DropDownMenu>
+          ) : (
+            <MenuIcon className="w-6 h-6 text-right opacity-0" />
           )}
         </div>
       </CardHeader>
@@ -112,17 +117,19 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
               {parsedCourseOutput?.level}
             </Badge>
           </div>
-          <div>
-            {hasPurchasedCourse ? (
-              <Badge variant={"outline"}>purchased</Badge>
-            ) : !isCourseCreator ? (
-              <div className="bg-gray-500  p-3 flex justify-center items-center rounded-full w-8 h-8 border border-red-0">
-                <h4 className="text-white text-[11px]">
-                  ${course?.price > 0 ? course?.price : "free"}
-                </h4>
-              </div>
-            ) : null}
-          </div>
+          {authUser?.primaryEmailAddress?.emailAddress && (
+            <div>
+              {hasPurchasedCourse ? (
+                <Badge variant={"outline"}>purchased</Badge>
+              ) : !isCourseCreator ? (
+                <div className="bg-gray-500  p-3 flex justify-center items-center rounded-full w-8 h-8 border border-red-0">
+                  <h4 className="text-white text-[11px]">
+                    ${course?.price > 0 ? course?.price : "free"}
+                  </h4>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       </CardFooter>
     </Card>

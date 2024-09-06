@@ -1,7 +1,35 @@
 [
   {
+    "question": "What is Course Generator AI?",
+    "answer": "Course Generator AI is an intelligent platform for creating and managing AI-driven educational courses. It allows educators to design tailored content to meet diverse learning needs and enhance user engagement."
+  },
+  {
+    "question": "How do I create a new course?",
+    "answer": "To create a new course, log in to the platform and navigate to the 'Create Course' section. Follow the prompts to input course details, upload content, and configure settings."
+  },
+  {
+    "question": "Can I customize the course content?",
+    "answer": "Yes, you can customize the course content to suit different learning styles and requirements. The platform offers various tools to tailor your course material effectively."
+  },
+  {
+    "question": "How do I manage my courses?",
+    "answer": "You can manage your courses from the 'My Courses' dashboard. Here, you can edit course details, monitor progress, and update content as needed."
+  },
+  {
+    "question": "How do I track student progress?",
+    "answer": "Track student progress through the 'Analytics' section, where you can view detailed reports on student engagement, performance, and completion rates."
+  },
+  {
+    "question": "Can I integrate third-party tools with Course Generator AI?",
+    "answer": "Yes, the platform supports integration with various third-party tools and services to enhance the functionality and reach of your courses."
+  },
+  {
+    "question": "How do I get support?",
+    "answer": "For support, you can contact our support team through the 'Help' section on the platform. We offer assistance via email, live chat, and detailed help guides."
+  },
+  {
     "question": "What is Hirrd?",
-    "answer": "Hirrd is a Job Portal Application allows companies to post job listings and users to search and apply for jobs. It provides features for both job seekers and employers, with user-friendly interfaces and secure authentication."
+    "answer": "Hirrd is a Job Portal Application that allows companies to post job listings and users to search and apply for jobs. It provides features for both job seekers and employers, with user-friendly interfaces and secure authentication."
   },
   {
     "question": "How do I post a job?",
