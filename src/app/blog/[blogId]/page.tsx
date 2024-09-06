@@ -194,7 +194,8 @@ const SingleBlog = ({ params }: any) => {
     <div className="max-w-6xl mx-auto py-12">
       <div>
         <Image
-          src={result?.coverImageUrl}
+          src="https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
+          // src={result?.coverImageUrl}
           width={300}
           height={300}
           className="w-full min-h-[350px] max-h-[350px] rounded-lg"
