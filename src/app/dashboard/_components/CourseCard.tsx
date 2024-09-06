@@ -69,8 +69,9 @@ const CourseCard = ({ course, refreshData, fromHome }: any) => {
         >
           <Image
             src={
-              course?.courseBanner ||
-              "https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
+              course?.courseBanner
+                ? course?.courseBanner
+                : "https://www.searchenginejournal.com/wp-content/uploads/2019/07/the-essential-guide-to-using-images-legally-online.png"
             }
             width={200}
             height={160}
